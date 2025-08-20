@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: tone
+  
+  # Use H2 in-memory database for local testing
+  datasource:
+    url: jdbc:h2:mem:tonedb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+server:
+  port: 8081
+
+# Discord Bot Configuration
+discord:
+  bot:
+    token: ${DISCORD_BOT_TOKEN:YOUR_BOT_TOKEN_HERE}
+    
+# AI Service Configuration  
+ai:
+  service:
+    huggingface:
+      api-url: https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment
+      api-key: ${HUGGINGFACE_API_KEY:YOUR_API_KEY_HERE}
+    
+# Application Settings
+tone:
+  analysis:
+    batch-size: 10
+    sentiment-threshold: 0.7
+    vibe-shift-threshold: 0.5
+    max-requests-per-hour: 800
+    skip-commands: true
+  reporting:
+    weekly-summary: true
+    meanest-member-count: 10
+
+logging:
+  level:
+    com.tonediscord: DEBUG
+    net.dv8tion.jda: INFO

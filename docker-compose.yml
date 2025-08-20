@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  tone-bot:
+    build: .
+    container_name: tone-discord-bot
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tonedb
+      - SPRING_DATASOURCE_USERNAME=toneuser
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - tone-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: tone-postgres
+    environment:
+      - POSTGRES_DB=tonedb
+      - POSTGRES_USER=toneuser
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - tone-network
+
+  # Optional: Redis for caching (for high-traffic servers)
+  redis:
+    image: redis:7-alpine
+    container_name: tone-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - tone-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  tone-network:
+    driver: bridge

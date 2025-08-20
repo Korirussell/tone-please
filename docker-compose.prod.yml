@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  tone-bot:
+    build: .
+    container_name: tone-discord-bot
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tonedb
+      - SPRING_DATASOURCE_USERNAME=toneuser
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SERVER_PORT=8081
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - tone-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: tone-postgres
+    environment:
+      - POSTGRES_DB=tonedb
+      - POSTGRES_USER=toneuser
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - tone-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U toneuser -d tonedb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx reverse proxy (optional, for SSL and load balancing)
+  nginx:
+    image: nginx:alpine
+    container_name: tone-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - tone-bot
+    restart: unless-stopped
+    networks:
+      - tone-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  tone-network:
+    driver: bridge

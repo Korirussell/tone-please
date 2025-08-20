@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: tone
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tonedb}
+    username: ${SPRING_DATASOURCE_USERNAME:toneuser}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: false
+    database-platform: ${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+
+server:
+  port: ${SERVER_PORT:8081}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+# Discord Bot Configuration
+discord:
+  bot:
+    token: ${DISCORD_BOT_TOKEN}
+    
+# AI Service Configuration  
+ai:
+  service:
+    huggingface:
+      api-url: https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment
+      api-key: ${HUGGINGFACE_API_KEY}
+    
+# Application Settings
+tone:
+  analysis:
+    batch-size: ${TONE_ANALYSIS_BATCH_SIZE:10}
+    sentiment-threshold: ${TONE_ANALYSIS_SENTIMENT_THRESHOLD:0.7}
+    vibe-shift-threshold: ${TONE_ANALYSIS_VIBE_SHIFT_THRESHOLD:0.5}
+    max-requests-per-hour: 800
+    skip-commands: true
+  reporting:
+    weekly-summary: ${TONE_REPORTING_WEEKLY_SUMMARY:true}
+    meanest-member-count: ${TONE_REPORTING_MEANEST_MEMBER_COUNT:10}
+
+# Logging configuration
+logging:
+  level:
+    com.tonediscord: INFO
+    net.dv8tion.jda: WARN
+    org.springframework: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    path: logs/
+    name: logs/tone-bot.log
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
