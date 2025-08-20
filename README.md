@@ -139,4 +139,4 @@ Issues and pull requests welcome. Particularly interested in:
 
 ---
 
-Built by Kori Russell • [Live Demo](http://54.165.3.54:8081/actuator/health) • [LinkedIn](https://linkedin.com/in/korirussell)
+Built by Kori Russell • [Live Demo](http://54.165.3.54:8081/actuator/health) 
