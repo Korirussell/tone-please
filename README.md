@@ -2,6 +2,10 @@
 
 A Discord bot that analyzes the sentiment of chat messages in real-time. Built to help communities understand their conversation dynamics and catch potential toxicity before it escalates.
 
+## Add to Your Server
+
+**[Install Tone Bot](https://discord.com/oauth2/authorize?client_id=1407744855840657492&permissions=68608&integration_type=0&scope=bot)**
+
 ## Why I built this
 
 Managing online communities is tough. Moderators can catch obvious rule violations, but subtle toxicity and negative atmosphere shifts often go unnoticed until it's too late. I wanted to build something that could help detect these patterns automatically.
@@ -15,6 +19,33 @@ Tone processes every message through sentiment analysis and tracks emotional tre
 - **Identifies problematic users** through sentiment pattern analysis  
 - **REST API** for custom integrations and dashboards
 - **Historical data storage** for long-term community health insights
+
+## Bot Commands
+
+After adding the bot to your server, use these commands:
+
+- `!tone help` - Show available commands
+- `!tone stats` - Display server sentiment statistics
+- `!tone analyze [text]` - Analyze sentiment of any text
+- `!tone leaderboard` - Show user sentiment rankings
+- `!tone vibe` - Check current server mood
+
+## Demo Instructions
+
+### Quick Demo
+1. **Add the bot** using the installation link above
+2. **Test analysis**: `!tone analyze I love this Discord server`
+3. **Check server stats**: `!tone stats`
+4. **View leaderboard**: `!tone leaderboard`
+
+### Extended Demo
+1. **Have multiple users chat** to build sentiment history
+2. **Try different sentiment types**:
+   - Positive: `!tone analyze This is amazing`
+   - Negative: `!tone analyze This is terrible`
+   - Neutral: `!tone analyze The weather is cloudy today`
+3. **Watch real-time tracking** as the bot processes regular messages
+4. **Check mood**: `!tone vibe` to see current server atmosphere
 
 ## Tech stack
 
